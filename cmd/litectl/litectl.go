@@ -16,6 +16,8 @@ var (
 	inCluster  = flag.Bool("in-cluster", false, "Specify when running this within the cluster")
 	outputYaml = flag.Bool("yaml", true, "Output YAML")
 	outputJSON = flag.Bool("json", false, "Output JSON")
+
+	configLocation = flag.String("config-path", "", "Absolute path to kube config (optional)")
 )
 
 func main() {
@@ -44,7 +46,11 @@ func getClient() clusterinfo.Client {
 	if *inCluster {
 		client, err = clusterinfo.NewClientInsideCluster()
 	} else {
-		client, err = clusterinfo.NewClientOutsideCluster()
+		if *configLocation != "" {
+			client, err = clusterinfo.NewClientOutsideCluster(clusterinfo.WithConfigLocation(*configLocation))
+		} else {
+			client, err = clusterinfo.NewClientOutsideCluster()
+		}
 	}
 	if err != nil {
 		exitErr(err)
