@@ -2,16 +2,8 @@
 <li>
     <h3>{{ .Name }}</h3>
     <h4>System</h4>
-    <table>
-        <tr>
-            <td>OS:</td>
-            <td>{{ .System.OSImage }} ({{ .System.OS }}  {{ .System.KernelVersion }})</td>
-        </tr>
-        <tr>
-            <td>Arch:</td>
-            <td>{{ .System.Arch }}</td>
-        </tr>
-    </table>
+    {{ .System.OSImage }} ({{ .System.OS }}/{{ .System.Arch }}  {{ .System.KernelVersion }})
+
     <h4>Resources</h4>
     <table>
         <tr>
