@@ -1,0 +1,40 @@
+{{ define "node" }}
+<li>
+    <h3>{{ .Name }}</h3>
+    <h4>System</h4>
+    <table>
+        <tr>
+            <td>OS:</td>
+            <td>{{ .System.OSImage }} ({{ .System.OS }}  {{ .System.KernelVersion }})</td>
+        </tr>
+        <tr>
+            <td>Arch:</td>
+            <td>{{ .System.Arch }}</td>
+        </tr>
+    </table>
+    <h4>Resources</h4>
+    <table>
+        <tr>
+            <td>CPU ({{ .Resources.CPU.Capacity }} cores):</td>
+            <td>{{ .Resources.CPU.Usage }}</td>
+        </tr>
+    </table>
+</li>
+{{ end }}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Kubernetes cluster dashboard</h1>
+    <h2>Nodes</h2>
+    <ul>
+        {{ range $index, $node := .Nodes }}
+        {{ template "node" $node }}
+        {{ end }}
+    </ul>
+</body>
+</html>
