@@ -22,7 +22,6 @@ const (
 	idleTimeout  = 60 * time.Second
 
 	defaultPort = "8000"
-	defaultHost = "localhost"
 )
 
 var _indexTemplate = template.Must(template.ParseFiles("index.html"))
@@ -30,15 +29,6 @@ var _clusterClient clusterinfo.Client
 
 type pageData struct {
 	Nodes []clusterinfo.Node
-}
-
-func init() {
-	c, err := clusterinfo.NewClientOutsideCluster()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to initialize client: %v", err)
-		os.Exit(1)
-	}
-	_clusterClient = c
 }
 
 func main() {
@@ -51,7 +41,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         getHost() + ":" + getPort(),
+		Addr:         ":" + getPort(),
 		WriteTimeout: writeTimeout,
 		ReadTimeout:  readTimeout,
 		IdleTimeout:  idleTimeout,
@@ -83,7 +73,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(500)
 		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "Internal server error — failed to get nodes")
+		fmt.Fprintf(w, "Internal server error — failed to get nodes: %v", err)
 		return
 	}
 	err = _indexTemplate.Execute(w, pageData{
@@ -124,12 +114,4 @@ func getPort() string {
 		return p
 	}
 	return defaultPort
-}
-
-func getHost() string {
-	const hostKey = "CONN_HOST"
-	if h, found := os.LookupEnv(hostKey); found {
-		return h
-	}
-	return defaultHost
 }
